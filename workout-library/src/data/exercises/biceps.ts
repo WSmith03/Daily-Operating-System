@@ -527,7 +527,7 @@ export const bicepsExercises: Exercise[] = [
     ],
     regressions: [],
     progressions: ["barbell-curl"],
-    alternatives: ["barbell-curl", "dumbbell-curl", "cable-curl-ez-bar"],
+    alternatives: ["barbell-curl", "dumbbell-curl", "cable-curl-straight-bar"],
     recommendedSets: "3-4",
     recommendedReps: "8-12",
     recommendedRest: "60-75 sec",
