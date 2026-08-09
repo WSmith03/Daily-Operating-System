@@ -5,6 +5,7 @@ import { Plus, Check } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCustomWorkouts } from "@/hooks/useCustomWorkouts";
+import { uid } from "@/lib/utils";
 
 export function AddToWorkoutSheet({ exerciseSlug, trigger }: { exerciseSlug: string; trigger: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -18,7 +19,7 @@ export function AddToWorkoutSheet({ exerciseSlug, trigger }: { exerciseSlug: str
     updateWorkout(id, {
       exercises: [
         ...workout.exercises,
-        { id: `cwe-${Date.now()}-${Math.floor(Math.random() * 1000)}`, exerciseSlug, sets: 3, reps: "10", restSeconds: 60 },
+        { id: uid("cwe"), exerciseSlug, sets: 3, reps: "10", restSeconds: 60 },
       ],
     });
     setAddedTo(id);

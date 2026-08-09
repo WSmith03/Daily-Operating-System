@@ -8,8 +8,13 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setValue(readStorage(key, initialValue));
-    setHydrated(true);
+    // Deferred to a microtask so state updates happen outside the effect's
+    // synchronous body (avoids the SSR/client hydration mismatch that would
+    // occur if we read localStorage during the initial render instead).
+    queueMicrotask(() => {
+      setValue(readStorage(key, initialValue));
+      setHydrated(true);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 

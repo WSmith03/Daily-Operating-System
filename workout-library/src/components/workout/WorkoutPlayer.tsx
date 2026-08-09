@@ -2,21 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ChevronRight, Repeat, X } from "lucide-react";
+import { Check, Repeat, X } from "lucide-react";
 import { allExercises } from "@/data/exercises";
 import { useHistory } from "@/hooks/useHistory";
-import { suggestProgressiveOverload } from "@/lib/progressiveOverload";
 import { RestTimer } from "@/components/workout/RestTimer";
 import { SwapExerciseSheet } from "@/components/workout/SwapExerciseSheet";
+import { SetEntryPanel } from "@/components/workout/SetEntryPanel";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import type { Exercise, HistoryExerciseEntry, WorkoutExercise } from "@/types";
 import { formatSeconds } from "@/lib/utils";
-
-function parseLeadingNumber(text: string, fallback: number): number {
-  const match = text.match(/\d+/);
-  return match ? Number(match[0]) : fallback;
-}
 
 export function WorkoutPlayer({
   workoutName,
@@ -54,14 +49,6 @@ export function WorkoutPlayer({
   const currentExercise = sessionExercises[exerciseIdx];
   const lastSession = currentExercise ? getLastSessionFor(currentExercise.slug) : undefined;
 
-  const [reps, setReps] = useState(() => parseLeadingNumber(currentWE?.reps ?? "10", 10));
-  const [weight, setWeight] = useState<number | "">("");
-
-  useEffect(() => {
-    setReps(parseLeadingNumber(currentWE?.reps ?? "10", 10));
-    setWeight("");
-  }, [exerciseIdx, setNumber, currentWE?.reps]);
-
   useEffect(() => {
     if (finished) return;
     const id = setInterval(() => setElapsed((e) => e + 1), 1000);
@@ -70,12 +57,14 @@ export function WorkoutPlayer({
 
   useEffect(() => {
     if (!resting) return;
-    if (restLeft <= 0) {
-      setResting(false);
-      advanceAfterRest.current();
-      return;
-    }
-    const id = setTimeout(() => setRestLeft((s) => s - 1), 1000);
+    const id = setTimeout(() => {
+      if (restLeft <= 1) {
+        setResting(false);
+        advanceAfterRest.current();
+      } else {
+        setRestLeft((s) => s - 1);
+      }
+    }, 1000);
     return () => clearTimeout(id);
   }, [resting, restLeft]);
 
@@ -104,7 +93,7 @@ export function WorkoutPlayer({
     [addEntry, customWorkoutId, elapsed, sessionExercises, workoutExercises, workoutName, workoutSlug],
   );
 
-  const completeSet = () => {
+  const completeSet = (reps: number, weight: number | "") => {
     const entry = { setNumber, reps: Number(reps), weight: weight === "" ? undefined : Number(weight), completed: true };
     const nextLogs = { ...logs, [exerciseIdx]: [...(logs[exerciseIdx] ?? []), entry] };
     setLogs(nextLogs);
@@ -197,81 +186,19 @@ export function WorkoutPlayer({
         />
       ) : (
         <>
-          <div className="rounded-lg border border-border bg-surface p-5">
-            <p className="text-[13px] font-semibold uppercase tracking-wide text-accent">
-              Set {setNumber} of {currentWE.sets}
-            </p>
-            <h1 className="mt-1 text-[24px] font-extrabold leading-tight">{currentExercise.name}</h1>
-            <p className="mt-1 text-[13px] text-muted-foreground">Target: {currentWE.reps} reps</p>
-
-            {lastSession && (
-              <>
-                <p className="mt-2 text-[12px] text-muted-foreground">
-                  Last time: {lastSession.exercise.sets.length} sets
-                  {lastSession.exercise.sets[0]?.weight ? ` · ${lastSession.exercise.sets[0].weight}kg` : ""}
-                  {lastSession.exercise.sets[0]?.reps ? ` · ${lastSession.exercise.sets[0].reps} reps` : ""}
-                </p>
-                {suggestProgressiveOverload(lastSession.exercise.sets, currentWE.reps) && (
-                  <p className="mt-1 text-[12px] font-medium text-accent">
-                    {suggestProgressiveOverload(lastSession.exercise.sets, currentWE.reps)}
-                  </p>
-                )}
-              </>
-            )}
-
-            <div className="mt-4 flex gap-3">
-              <label className="flex-1">
-                <span className="text-[11px] font-semibold text-muted-foreground">Reps</span>
-                <input
-                  type="number"
-                  value={reps}
-                  onChange={(e) => setReps(Number(e.target.value))}
-                  className="mt-1 h-12 w-full rounded-lg border border-border bg-surface-elevated px-3 text-center text-[16px] font-bold outline-none"
-                />
-              </label>
-              <label className="flex-1">
-                <span className="text-[11px] font-semibold text-muted-foreground">Weight (kg)</span>
-                <input
-                  type="number"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value === "" ? "" : Number(e.target.value))}
-                  placeholder="—"
-                  className="mt-1 h-12 w-full rounded-lg border border-border bg-surface-elevated px-3 text-center text-[16px] font-bold outline-none"
-                />
-              </label>
-            </div>
-
-            {currentWE.notes && <p className="mt-3 text-[12.5px] text-muted-foreground">{currentWE.notes}</p>}
-          </div>
-
-          {currentExercise.coachingCues && currentExercise.coachingCues.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {currentExercise.coachingCues.slice(0, 2).map((c, i) => (
-                <span key={i} className="rounded-lg bg-accent-soft px-3 py-2 text-[12.5px] font-medium text-accent">
-                  “{c}”
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="flex flex-col gap-2">
-            <Button size="lg" onClick={completeSet}>
-              <Check size={18} /> Complete Set
-            </Button>
-            <div className="flex gap-2">
-              <Button variant="secondary" className="flex-1" onClick={() => setSwapOpen(true)}>
-                <Repeat size={16} /> Swap
-              </Button>
-              <Button
-                variant="secondary"
-                className="flex-1"
-                onClick={skipToNextExercise}
-                disabled={exerciseIdx >= workoutExercises.length - 1}
-              >
-                Next <ChevronRight size={16} />
-              </Button>
-            </div>
-          </div>
+          <p className="text-[13px] font-semibold uppercase tracking-wide text-accent">
+            Set {setNumber} of {currentWE.sets}
+          </p>
+          <SetEntryPanel
+            key={`${exerciseIdx}-${setNumber}`}
+            workoutExercise={currentWE}
+            exercise={currentExercise}
+            lastSession={lastSession}
+            onCompleteSet={completeSet}
+            onSwap={() => setSwapOpen(true)}
+            onNext={skipToNextExercise}
+            canGoNext={exerciseIdx < workoutExercises.length - 1}
+          />
         </>
       )}
 
