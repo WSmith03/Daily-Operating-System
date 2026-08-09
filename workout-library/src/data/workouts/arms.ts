@@ -242,6 +242,7 @@ export const armWorkouts: Workout[] = [
     durationMinutes: 45,
     difficulty: "Intermediate",
     equipment: ["Barbell", "Dumbbells", "Cable"],
+    template: "Bro Split",
     warmup: [{ exerciseSlug: "band-bicep-curl", sets: 2, reps: "15", restSeconds: 30, section: "warmup" }],
     exercises: [
       { exerciseSlug: "barbell-curl", sets: 4, reps: "8-12", restSeconds: 60 },

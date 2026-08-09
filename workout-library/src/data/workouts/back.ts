@@ -12,6 +12,7 @@ export const backWorkouts: Workout[] = [
     durationMinutes: 45,
     difficulty: "Intermediate",
     equipment: ["Cable", "Dumbbells", "Machine"],
+    template: "Bro Split",
     warmup: [{ exerciseSlug: "band-pull-apart", sets: 2, reps: "15", restSeconds: 30, section: "warmup" }],
     exercises: [
       { exerciseSlug: "lat-pulldown-wide-grip", sets: 4, reps: "8-12", restSeconds: 90 },

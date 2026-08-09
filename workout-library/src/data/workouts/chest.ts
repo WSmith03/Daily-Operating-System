@@ -80,6 +80,7 @@ export const chestWorkouts: Workout[] = [
     durationMinutes: 45,
     difficulty: "Intermediate",
     equipment: ["Dumbbells", "Cable", "Machine"],
+    template: "Bro Split",
     warmup: [
       { exerciseSlug: "pec-deck-fly", sets: 1, reps: "15", restSeconds: 30, section: "warmup", notes: "Light weight, just to feel the pecs stretch and contract." },
       { exerciseSlug: "band-pull-apart", sets: 1, reps: "15", restSeconds: 30, section: "warmup" },

@@ -109,6 +109,7 @@ export const shoulderWorkouts: Workout[] = [
     durationMinutes: 40,
     difficulty: "Intermediate",
     equipment: ["Dumbbells", "Cable"],
+    template: "Bro Split",
     warmup: [{ exerciseSlug: "band-pull-apart", sets: 2, reps: "15", restSeconds: 30, section: "warmup" }],
     exercises: [
       { exerciseSlug: "dumbbell-shoulder-press", sets: 4, reps: "8-12", restSeconds: 90 },
