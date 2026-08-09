@@ -43,6 +43,19 @@ library, a stretching library, and a dedicated BJJ/grappling section.
   hip stretches and BJJ hip mobility together).
 - **Installable PWA** — add it to your iPhone home screen and use it like a native app, offline.
 
+## Content library (v1 seed data)
+
+| Content | Count |
+|---|---|
+| Exercises | 418 |
+| Preset workouts | 141 |
+| Mobility drills | 59 |
+| Stretches | 82 |
+| Kettlebell exercises | 58 (included in the 418 exercises above) |
+| Kettlebell preset workouts | 20 |
+| Mobility/stretch/recovery routines | 32 |
+| BJJ-specific workouts & routines | 10 |
+
 ## Technology stack
 
 - [Next.js](https://nextjs.org/) 16 (App Router, TypeScript, React 19)
@@ -58,7 +71,6 @@ library, a stretching library, and a dedicated BJJ/grappling section.
 ## Getting started
 
 ```bash
-cd workout-library
 npm install
 npm run dev
 ```
@@ -76,8 +88,8 @@ npm run start   # serve the production build locally
 ## Deploying to Vercel
 
 1. Push this repository to GitHub (see below).
-2. In [Vercel](https://vercel.com/new), import the repo and set the **Root Directory** to
-   `workout-library` (this app lives in a subdirectory alongside other tools in this repo).
+2. In [Vercel](https://vercel.com/new), import the repo. The app lives at the repo root, so no
+   Root Directory override is needed.
 3. Framework preset: Next.js (auto-detected). No environment variables are required for v1.
 4. Deploy. Every push to your default branch redeploys automatically.
 
